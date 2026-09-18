@@ -1,0 +1,81 @@
+@model List<Project>
+@{
+    ViewData["Title"] = "Project Index";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow">PROJECT INDEX</span>
+        <h1>17 Projects.<br />One Development Journey.</h1>
+        <p>
+            Every repository behind this portfolio, in chronological course order —
+            from the first prelim activity to the final prefinal group project.
+            Hover a row for a preview, or open a project's dedicated case study.
+        </p>
+    </div>
+</section>
+
+<section class="list-section">
+    <div class="container">
+        <div class="index-list">
+            @foreach (var project in Model)
+            {
+                <div class="index-row">
+                    <span class="index-num">@project.Id.ToString("D2")</span>
+                    <a class="index-main" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" style="text-decoration:none;">
+                        <span class="index-name">@project.Name</span>
+                        <div class="index-meta">
+                            <span>@project.RepositoryName</span>
+                            <span class="tag">@project.Category</span>
+                            <span class="tag">@string.Join(" · ", project.Technologies.Take(2))</span>
+                        </div>
+                        <div class="index-desc">@project.ShortDescription</div>
+                    </a>
+                    <a class="index-thumb" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" aria-hidden="true" tabindex="-1">
+                        <partial name="_ProjectThumb" model="project" />
+                    </a>
+                    <div class="index-actions">
+                        <a class="index-arrow mono" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">DETAILS →</a>
+                        <a class="btn btn-sm btn-ghost" href="@project.GitHubUrl" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="grid-section">
+    <div class="container">
+        <div class="section-heading">
+            <h2 class="section-title">Browse as Grid</h2>
+            <span class="count mono">@Model.Count TOTAL</span>
+        </div>
+
+        <div class="card-grid">
+            @foreach (var project in Model)
+            {
+                <div class="project-card">
+                    <div class="card-top">
+                        <span class="card-num mono">@project.Id.ToString("D2")</span>
+                        <span class="card-category">@project.Category</span>
+                    </div>
+                    <div class="card-thumb">
+                        <partial name="_ProjectThumb" model="project" />
+                    </div>
+                    <div class="card-name">@project.Name</div>
+                    <p class="card-desc">@project.ShortDescription</p>
+                    <div class="card-tech">
+                        @foreach (var tech in project.Technologies)
+                        {
+                            <span>@tech</span>
+                        }
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost btn-sm" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">View Details</a>
+                        <a class="btn btn-sm" href="@project.GitHubUrl" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

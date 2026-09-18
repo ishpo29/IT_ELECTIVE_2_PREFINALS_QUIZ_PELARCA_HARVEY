@@ -1,8 +1,86 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model List<Project>
+@{
+    ViewData["Title"] = "Portfolio";
+    var total = ViewBag.TotalProjects;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="container">
+        <div class="hero-eyebrow eyebrow">PORTFOLIO / 2026</div>
+        <h1>HARVEY ISCHEI<br />PELARCA</h1>
+        <div class="hero-tagline">@total PROJECTS — ONE DEVELOPMENT JOURNEY</div>
+        <p class="hero-intro">
+            A curated archive of ASP.NET Core MVC projects built across the Prelim, Midterm
+            and Prefinal terms of IT Elective 2. Each entry is a real, verifiable GitHub
+            repository documenting a step in learning the .NET MVC stack — from first
+            in-class activities to collaborative full-scope submissions.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" asp-controller="Projects" asp-action="Index">Explore Projects</a>
+            <a class="btn btn-ghost" href="https://github.com/ishpo29" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="container">
+    <div class="stats">
+        <div class="stat">
+            <div class="value">@total</div>
+            <div class="label">Projects</div>
+        </div>
+        <div class="stat">
+            <div class="value">C#</div>
+            <div class="label">Primary Language</div>
+        </div>
+        <div class="stat">
+            <div class="value">ASP.NET</div>
+            <div class="label">MVC</div>
+        </div>
+        <div class="stat">
+            <div class="value">2026</div>
+            <div class="label">Portfolio</div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<section class="grid-section">
+    <div class="container">
+        <div class="section-heading">
+            <h2 class="section-title">Featured Entries</h2>
+            <span class="count mono">SHOWING @Model.Count OF @total</span>
+        </div>
+
+        <div class="card-grid">
+            @foreach (var project in Model)
+            {
+                <div class="project-card">
+                    <div class="card-top">
+                        <span class="card-num mono">@project.Id.ToString("D2")</span>
+                        <span class="card-category">@project.Category</span>
+                    </div>
+                    <div class="card-thumb">
+                        <partial name="_ProjectThumb" model="project" />
+                    </div>
+                    <div class="card-name">@project.Name</div>
+                    <p class="card-desc">@project.ShortDescription</p>
+                    <div class="card-tech">
+                        @foreach (var tech in project.Technologies)
+                        {
+                            <span>@tech</span>
+                        }
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost btn-sm" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">View Details</a>
+                        <a class="btn btn-sm" href="@project.GitHubUrl" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div style="text-align:center; margin-top:48px;">
+            <a class="btn btn-primary" asp-controller="Projects" asp-action="Index">View Full Project Index →</a>
+        </div>
+    </div>
+</section>

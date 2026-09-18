@@ -1,0 +1,164 @@
+@model ProjectDetailViewModel
+@{
+    var project = Model.Project;
+    ViewData["Title"] = project.Name;
+}
+
+<section class="detail-hero">
+    <div class="container">
+        <span class="eyebrow">PROJECT @project.Id.ToString("D2") / @project.Category.ToUpperInvariant()</span>
+        <h1>@project.Name</h1>
+        <div class="index-meta">
+            <span class="mono">@project.RepositoryName</span>
+            @if (project.IsFork)
+            {
+                <span class="tag">Forked from class template</span>
+            }
+            @if (project.Collaborators.Any())
+            {
+                <span class="tag">With @string.Join(", ", project.Collaborators)</span>
+            }
+        </div>
+
+        <div class="detail-thumb">
+            <partial name="_ProjectThumb" model="project" />
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container detail-body">
+        <div class="detail-main">
+            <div class="block">
+                <div class="block-title">About</div>
+                <p class="block-text">@project.Description</p>
+            </div>
+
+            <div class="block">
+                <div class="block-title">Technologies</div>
+                <div class="tech-tags">
+                    @foreach (var tech in project.Technologies)
+                    {
+                        <span>@tech</span>
+                    }
+                </div>
+            </div>
+
+            <div class="block">
+                <div class="block-title">Features</div>
+                <ul class="feature-list">
+                    @foreach (var feature in project.Features)
+                    {
+                        <li><span class="arrow">→</span> @feature</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <aside class="detail-side">
+            <div class="info-panel">
+                <div class="block-title" style="margin-bottom:14px;">Project Information</div>
+                <div class="info-row">
+                    <span class="k">Repository</span>
+                    <span class="v mono">@project.RepositoryName</span>
+                </div>
+                <div class="info-row">
+                    <span class="k">Category</span>
+                    <span class="v">@project.Category</span>
+                </div>
+                <div class="info-row">
+                    <span class="k">Type</span>
+                    <span class="v">@(project.IsFork ? "Forked exercise" : "Original submission")</span>
+                </div>
+                <div class="info-row">
+                    <span class="k">Owner</span>
+                    <span class="v mono">ishpo29</span>
+                </div>
+                <a class="btn btn-primary btn-block" href="@project.GitHubUrl" target="_blank" rel="noopener noreferrer">View GitHub Repository ↗</a>
+            </div>
+        </aside>
+    </div>
+</section>
+
+<nav class="project-nav-wrap">
+    <div class="container">
+    <div class="project-nav">
+        @if (Model.PreviousProject != null)
+        {
+            <a class="nav-prev" asp-controller="Projects" asp-action="Details" asp-route-id="@Model.PreviousProject.Id">
+                <span class="nav-dir">← Previous</span>
+                <span>@Model.PreviousProject.Name</span>
+            </a>
+        }
+        else { <span></span> }
+
+        <a class="nav-index" asp-controller="Projects" asp-action="Index">Project Index</a>
+
+        @if (Model.NextProject != null)
+        {
+            <a class="nav-next" asp-controller="Projects" asp-action="Details" asp-route-id="@Model.NextProject.Id">
+                <span class="nav-dir">Next →</span>
+                <span>@Model.NextProject.Name</span>
+            </a>
+        }
+        else { <span></span> }
+    </div>
+    </div>
+</nav>
+
+<section class="comments-section" id="comments">
+    <div class="container">
+        <div class="section-heading">
+            <h2 class="section-title">Comments</h2>
+            <span class="count mono">PROJECT @project.Id.ToString("D2") DISCUSSION</span>
+        </div>
+
+        @if (Model.Comments.Any())
+        {
+            <div class="comment-list">
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="comment-item">
+                        <div class="comment-head">
+                            <span class="comment-name">@comment.Name</span>
+                            <span class="comment-date">@comment.CreatedAt.ToString("MMM d, yyyy — h:mm tt")</span>
+                        </div>
+                        <div class="comment-body">@comment.Content</div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="comment-empty">No comments yet on this project. Be the first to leave one.</div>
+        }
+
+        <div class="comment-form">
+            <div class="block-title" style="margin-bottom:18px;">Post a Comment</div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-summary" asp-validation-summary="ModelOnly"></div>
+            }
+
+            <form asp-controller="Comments" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="NewComment.ProjectId" />
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="NewComment.Name">Name</label>
+                    <input class="form-control" asp-for="NewComment.Name" maxlength="60" placeholder="Your name" />
+                    <span class="field-error" asp-validation-for="NewComment.Name"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" asp-for="NewComment.Content">Comment</label>
+                    <textarea class="form-control" asp-for="NewComment.Content" maxlength="600" placeholder="Share your thoughts on this project"></textarea>
+                    <span class="field-error" asp-validation-for="NewComment.Content"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Post Comment</button>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,34 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Restricted Access";
+}
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <span class="eyebrow auth-eyebrow">RESTRICTED ACCESS</span>
+        <div class="auth-title">Portfolio Administration</div>
+        <div class="auth-sub mono">AUTHENTICATION REQUIRED</div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary" asp-validation-summary="All"></div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Username">Username</label>
+                <input class="form-control" asp-for="Username" autocomplete="username" autofocus />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" asp-for="Password">Password</label>
+                <input class="form-control" asp-for="Password" type="password" autocomplete="current-password" />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Authenticate</button>
+        </form>
+    </div>
+</div>

@@ -1,25 +1,31 @@
-using Microsoft.AspNetCore.Mvc;
-using PortfolioApp.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PortfolioApp.Data;
+using PortfolioApp.Models;
 
-namespace PortfolioApp.Controllers
+namespace PortfolioApp.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        // Homepage shows the hero, portfolio statistics, and a preview of the archive.
+        ViewBag.TotalProjects = ProjectRepository.All.Count;
+        var preview = ProjectRepository.All.Take(6).ToList();
+        return View(preview);
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    public IActionResult About()
+    {
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [AllowAnonymous]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        return View(model: requestId);
     }
 }

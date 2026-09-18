@@ -1,0 +1,19 @@
+@model string
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="page-header">
+    <div class="container">
+        <span class="eyebrow eyebrow--muted">ERROR</span>
+        <h1>Something went wrong.</h1>
+        <p>An unexpected error occurred while processing your request.</p>
+        @if (!string.IsNullOrEmpty(Model))
+        {
+            <p class="mono" style="color: var(--text-faint); font-size: 12px;">Request ID: @Model</p>
+        }
+        <div style="margin-top:24px;">
+            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Return Home</a>
+        </div>
+    </div>
+</section>

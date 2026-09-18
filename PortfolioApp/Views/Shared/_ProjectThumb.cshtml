@@ -1,0 +1,51 @@
+@model Project
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <img src="@Model.ImageUrl" alt="Preview for @Model.Name" class="thumb-image" loading="lazy" />
+}
+else
+{
+    // Deterministic pseudo-random layout seeded from the project Id so every
+    // thumbnail looks intentional and distinct, yet consistent across renders.
+    var seed = Model.Id;
+    var opacity = Model.ThumbAccent switch
+    {
+        "accent" => "1",
+        "muted" => "0.45",
+        _ => "0.75"
+    };
+    var barWidths = new[] { 30 + (seed * 7) % 40, 20 + (seed * 13) % 55, 15 + (seed * 5) % 35 };
+    var blockCount = 2 + (seed % 3);
+
+    <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Generated abstract preview for @Model.Name">
+        <rect width="400" height="250" class="thumb-svg-bg" />
+
+        <!-- Abstract "browser chrome" bar -->
+        <rect x="0" y="0" width="400" height="26" fill="rgba(255,255,255,0.03)" />
+        <circle cx="14" cy="13" r="3" fill="var(--accent)" opacity="@opacity" />
+        <circle cx="26" cy="13" r="3" fill="rgba(255,255,255,0.15)" />
+        <circle cx="38" cy="13" r="3" fill="rgba(255,255,255,0.15)" />
+        <rect x="60" y="9" width="120" height="8" rx="4" fill="rgba(255,255,255,0.08)" />
+
+        <!-- Abstract sidebar -->
+        <rect x="0" y="26" width="72" height="224" fill="rgba(255,255,255,0.025)" />
+        @for (var i = 0; i < 5; i++)
+        {
+            <rect x="14" y="@(46 + i * 26)" width="44" height="6" rx="3" fill="rgba(255,255,255,0.08)" />
+        }
+
+        <!-- Abstract content blocks representing UI structure, not real UI -->
+        @for (var i = 0; i < blockCount; i++)
+        {
+            var y = 46 + i * 58;
+            <rect x="96" y="@y" width="@(barWidths[i % barWidths.Length])%" height="34" rx="2" fill="var(--accent)" opacity="@(0.06 + (0.02 * i))" stroke="var(--accent)" stroke-opacity="@opacity" stroke-width="1" transform="scale(1,1)" />
+        }
+
+        <!-- Large ghost project number -->
+        <text x="392" y="238" text-anchor="end" class="thumb-label" font-size="46" font-weight="700" opacity="0.14">@Model.Id.ToString("D2")</text>
+
+        <!-- Metadata -->
+        <text x="96" y="232" class="thumb-label" font-size="10" letter-spacing="1">@Model.Category.ToUpperInvariant()</text>
+        <text x="96" y="216" class="thumb-placeholder-note">GENERATED PREVIEW — NOT AN ACTUAL SCREENSHOT</text>
+    </svg>
+}
